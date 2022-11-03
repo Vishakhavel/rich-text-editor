@@ -1,9 +1,9 @@
-let optionButtons = docuemnt.querySelectorAll('.option-button')
+let optionButtons = document.querySelectorAll('.option-button')
 
-let advancedOptionButton = docuemnt.querySelectorAll('.adv-option-button')
+let advancedOptionButton = document.querySelectorAll('.adv-option-button')
 
 let fontName = document.getElementById('fontName')
-let fontSize = document.getElementById('fontSize')
+let fontSizeRef = document.getElementById('fontSize')
 let writingArea = document.getElementById('text-input')
 let linkButton = document.getElementById('createLink')
 let alignButtons = document.querySelectorAll('.align')
@@ -30,13 +30,60 @@ const initializer = () => {
   highlighter(spacingButtons, true)
   highlighter(formatButtons, false)
   highlighter(scriptButtons, true)
+
+  // appending options to fontName
+
+  fontList.map((value) => {
+    let fontOption = document.createElement('option')
+    fontOption.value = value
+    fontOption.innerHTML = value
+    fontName.appendChild(fontOption)
+    // console.log(fontOption.value)
+  })
+
+  // appending optoins to fontSize
+
+  for (let i = 1; i <= 7; i++) {
+    let option = document.createElement('option')
+    option.value = i
+    option.innerHTML = i
+    fontSizeRef.appendChild(option)
+  }
+
+  // default size = 3
+  fontSizeRef.value = 3
 }
 
-fontList.map((value) => {
-  let option = document.createElement('option')
-  option.val = value
-  option.innerHTML = value
-  fontName.appendChild(option)
+const modifyText = (command, defaultUi, value) => {
+  // execCommand executes the command on a specific text
+  document.execCommand(command, defaultUi, value)
+}
+
+// basic operations which don't need value parameter, so the second and third args in the execCommand are false and null.
+optionButtons.forEach((currentButton) => {
+  currentButton.addEventListener('click', () => {
+    modifyText(currentButton.id, false, null)
+  })
+})
+
+// options that require value parameter.
+advancedOptionButton.forEach((currentButton) => {
+  currentButton.addEventListener('change', () => {
+    modifyText(currentButton.id, false, currentButton.value)
+    // console.log(currentButton.value)
+  })
+})
+
+// link
+
+linkButton.addEventListener('click', () => {
+  let userLink = prompt('Enter a URL')
+  if (/http/i.test(userLink)) {
+    modifyText(linkButton.id, false, userLink)
+  } else {
+    userLink = 'http://' + userLink
+    modifyText(linkButton.id, false, userLink)
+  }
 })
 
 const highlighter = (className, needsRemoval) => {
